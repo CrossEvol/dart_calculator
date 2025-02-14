@@ -1,4 +1,4 @@
-import 'package:dart_calculator/dart_calculator.dart';
+import 'package:dart_calculator/index.dart';
 import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';

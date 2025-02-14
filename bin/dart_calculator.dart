@@ -1,4 +1,4 @@
-import 'package:dart_calculator/dart_calculator.dart';
+import 'package:dart_calculator/index.dart';
 
 import 'dart:io';
 
