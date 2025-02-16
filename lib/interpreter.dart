@@ -3,12 +3,16 @@ import 'exception.dart';
 import 'token.dart';
 
 abstract interface class Visitor<T> {
+  // ignore: unused_element
   T _visitIntegerNode(IntegerNode node);
 
+  // ignore: unused_element
   T _visitRealNode(RealNode node);
 
+  // ignore: unused_element
   T _visitBinaryNode(BinaryNode node);
 
+  // ignore: unused_element
   T _visitUnaryNode(UnaryNode node);
 }
 

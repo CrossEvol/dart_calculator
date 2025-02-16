@@ -8,72 +8,47 @@ import 'dart_calculator_test.mocks.dart';
 
 void main() {
   group("Lexer tests", () {
-    test('Plus', () {
+    void testLexer(String text, Token expected) {
       var lexer = Lexer(text: " + ");
       var token = lexer.nextToken();
       expect(token.type, TokenType.PLUS);
       expect(token.value, '+');
+    }
+
+    test('Plus', () {
+      testLexer(" + ", Token(type: TokenType.PLUS, value: '+'));
     });
     test('Minus', () {
-      var lexer = Lexer(text: " - ");
-      var token = lexer.nextToken();
-      expect(token.type, TokenType.MINUS);
-      expect(token.value, '-');
+      testLexer(" - ", Token(type: TokenType.MINUS, value: '-'));
     });
     test('Mul', () {
-      var lexer = Lexer(text: " * ");
-      var token = lexer.nextToken();
-      expect(token.type, TokenType.MUL);
-      expect(token.value, '*');
+      testLexer(" * ", Token(type: TokenType.MUL, value: '*'));
     });
-
     test('Div', () {
-      var lexer = Lexer(text: ' / ');
-      var token = lexer.nextToken();
-      expect(token.type, TokenType.DIV);
-      expect(token.value, '/');
+      testLexer(" / ", Token(type: TokenType.DIV, value: '/'));
     });
-
     test('LPAREN', () {
-      var lexer = Lexer(text: ' ( ');
-      var token = lexer.nextToken();
-      expect(token.type, TokenType.LPAREN);
-      expect(token.value, '(');
+      testLexer(" ( ", Token(type: TokenType.LPAREN, value: '('));
     });
-
     test('RPAREN', () {
-      var lexer = Lexer(text: ' ) ');
-      var token = lexer.nextToken();
-      expect(token.type, TokenType.RPAREN);
-      expect(token.value, ')');
+      testLexer(" ) ", Token(type: TokenType.RPAREN, value: ')'));
     });
-
     test('Integer', () {
-      var lexer = Lexer(text: ' 123 ');
-      var token = lexer.nextToken();
-      expect(token.type, TokenType.NUMBER);
-      expect(token.value, '123');
+      testLexer(" 123 ", Token(type: TokenType.NUMBER, value: '123'));
     });
-
     test('REAL', () {
-      var lexer = Lexer(text: ' 1.23 ');
-      var token = lexer.nextToken();
-      expect(token.type, TokenType.NUMBER);
-      expect(token.value, '1.23');
+      testLexer(" 1.23 ", Token(type: TokenType.NUMBER, value: '1.23'));
     });
     test('Error', () {
       var lexer = Lexer(text: ' abc ');
       expect(() => lexer.nextToken(), throwsA(isA<LexerException>()));
     });
     test('EOF', () {
-      var lexer = Lexer(text: '  ');
-      var token = lexer.nextToken();
-      expect(token.type, TokenType.EOF);
-      expect(token.value, 'EOF');
+      testLexer("  ", Token(type: TokenType.EOF, value: 'EOF'));
     });
   });
 
-  group('Parser', () {
+  group('Parser tests', () {
     test('parse integer', () {
       var lexer = MockLexer();
       when(lexer.nextToken())
@@ -173,16 +148,16 @@ void main() {
     });
 
     group('Interpreter tests', () {
-      test('parse integer', (){
+      test('parse integer', () {
         var parser = MockParser();
         when(parser.parse()).thenReturn(IntegerNode(value: 1));
         var node = parser.parse();
         var interpreter = Interpreter();
         var num = interpreter.interpret(node);
-       expect(num, equals(1));
+        expect(num, equals(1));
       });
 
-      test('parse real', (){
+      test('parse real', () {
         var parser = MockParser();
         when(parser.parse()).thenReturn(RealNode(value: 1.1));
         var node = parser.parse();
@@ -191,59 +166,128 @@ void main() {
         expect(num, equals(1.1));
       });
 
-      test('parse unary -> plus integer', (){
+      test('parse unary -> plus integer', () {
         var parser = MockParser();
-        when(parser.parse()).thenReturn(UnaryNode(operator: Operator.PLUS, right: IntegerNode(value: 2)));
+        when(parser.parse()).thenReturn(
+            UnaryNode(operator: Operator.PLUS, right: IntegerNode(value: 2)));
         var node = parser.parse();
         var interpreter = Interpreter();
         var num = interpreter.interpret(node);
         expect(num, equals(2));
       });
 
-      test('parse unary -> minus real', (){
+      test('parse unary -> minus real', () {
         var parser = MockParser();
-        when(parser.parse()).thenReturn(UnaryNode(operator: Operator.MINUS, right: RealNode(value: 2.0)));
+        when(parser.parse()).thenReturn(
+            UnaryNode(operator: Operator.MINUS, right: RealNode(value: 2.0)));
         var node = parser.parse();
         var interpreter = Interpreter();
         var num = interpreter.interpret(node);
         expect(num, equals(-2.0));
       });
 
-      test('parse binary -> plus integers', (){
+      test('parse binary -> plus integers', () {
         var parser = MockParser();
-        when(parser.parse()).thenReturn(BinaryNode(left: IntegerNode(value: 1), operator: Operator.PLUS, right: IntegerNode(value: 2)));
+        when(parser.parse()).thenReturn(BinaryNode(
+            left: IntegerNode(value: 1),
+            operator: Operator.PLUS,
+            right: IntegerNode(value: 2)));
         var node = parser.parse();
         var interpreter = Interpreter();
         var num = interpreter.interpret(node);
         expect(num, equals(3));
       });
 
-      test('parse binary -> minus integers', (){
+      test('parse binary -> minus integers', () {
         var parser = MockParser();
-        when(parser.parse()).thenReturn(BinaryNode(left: IntegerNode(value: 1), operator: Operator.MINUS, right: IntegerNode(value: 2)));
+        when(parser.parse()).thenReturn(BinaryNode(
+            left: IntegerNode(value: 1),
+            operator: Operator.MINUS,
+            right: IntegerNode(value: 2)));
         var node = parser.parse();
         var interpreter = Interpreter();
         var num = interpreter.interpret(node);
         expect(num, equals(-1));
       });
 
-      test('parse binary -> mul integers', (){
+      test('parse binary -> mul integers', () {
         var parser = MockParser();
-        when(parser.parse()).thenReturn(BinaryNode(left: IntegerNode(value: 2), operator: Operator.MUL, right: IntegerNode(value: 1)));
+        when(parser.parse()).thenReturn(BinaryNode(
+            left: IntegerNode(value: 2),
+            operator: Operator.MUL,
+            right: IntegerNode(value: 1)));
         var node = parser.parse();
         var interpreter = Interpreter();
         var num = interpreter.interpret(node);
         expect(num, equals(2));
       });
 
-      test('parse binary -> div integers', (){
+      test('parse binary -> div integers', () {
         var parser = MockParser();
-        when(parser.parse()).thenReturn(BinaryNode(left: IntegerNode(value: 2), operator: Operator.DIV, right: IntegerNode(value: 1)));
+        when(parser.parse()).thenReturn(BinaryNode(
+            left: IntegerNode(value: 2),
+            operator: Operator.DIV,
+            right: IntegerNode(value: 1)));
         var node = parser.parse();
         var interpreter = Interpreter();
         var num = interpreter.interpret(node);
         expect(num, equals(2));
       });
+    });
+  });
+
+  group('Interpreter tests', () {
+    void testInterpreter(String text, num expected) {
+      var lexer = Lexer(text: text);
+      var parser = Parser(lexer: lexer);
+      var node = parser.parse();
+      var interpreter = Interpreter();
+      var num = interpreter.interpret(node);
+      expect(num, equals(expected));
+    }
+
+    test('interpret integer', () {
+      testInterpreter("0", 0);
+      testInterpreter("1", 1);
+      testInterpreter("-1", -1);
+    });
+    test('interpret float', () {
+      testInterpreter("0.0", 0.0);
+      testInterpreter("1.0", 1.0);
+      testInterpreter("-1.0", -1.0);
+    });
+    test('interpret plus', () {
+      testInterpreter("1 + 2", 3);
+      testInterpreter("1 + 2 + 3", 6);
+      testInterpreter("1.0 + 2.0", 3.0);
+      testInterpreter("1 + 2.0", 3.0);
+      testInterpreter("-1 + -2", -3);
+      testInterpreter("-1.0 + -2", -3.0);
+    });
+    test('interpret minus', () {
+      testInterpreter("3 - 2", 1);
+      testInterpreter("3 - 2 - 1", 0);
+      testInterpreter("-1 - -2", 1);
+    });
+    test('interpret multiply', () {
+      testInterpreter("2 * 3", 6);
+      testInterpreter("-2 * 3", -6);
+      testInterpreter("2 * 3 * 4", 24);
+      testInterpreter("2.0 * 3 * 4", 24.0);
+    });
+    test('interpret divide', () {
+      testInterpreter("6 / 3", 2.0);
+      testInterpreter("6 / 3 / 2", 1.0);
+    });
+    test('interpret preference', () {
+      testInterpreter("1 + 2 * 3", 7);
+      testInterpreter("1 + 2 * 3 + 4", 11);
+      testInterpreter("1 + 2 * 3 - 2", 5);
+    });
+    test('interpret paren', () {
+      testInterpreter("(1 + 2) * (2 + 3)", 15);
+      testInterpreter("(-2) * (-3)", 6);
+      testInterpreter("(3 + 3) / (2 + 2)", 1.5);
     });
   });
 }
